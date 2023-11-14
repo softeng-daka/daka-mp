@@ -20,6 +20,20 @@
             <nut-col class="home-title">Find your flavor</nut-col>
             <nut-button type="default">更换推荐</nut-button>
         </nut-row>
+        <nut-space direction="vertical" :gutter="10">
+            <coffee-list-item
+                coffee-img="../../images/home/coffee1.png"
+                name="龙眼米酿风味慕斯浓缩"
+                brand="星巴克"
+                :sell-count="1000"
+            ></coffee-list-item>
+            <coffee-list-item
+                coffee-img="../../images/home/coffee2.png"
+                name="海盐焦糖慕斯浓缩"
+                brand="星巴克"
+                :sell-count="500"
+            ></coffee-list-item>
+        </nut-space>
     </nut-space>
   </view>
 </template>
@@ -28,7 +42,9 @@
 import { ref } from 'vue'
 import Taro from '@tarojs/taro'
 import '../../common.css'
-import { View } from '@tarojs/components';
+import '../../images/home/coffee1.png'
+import '../../images/home/coffee2.png'
+import coffeeListItem from '../../components/coffee-list-item.vue'
 
 </script>
 

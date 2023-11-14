@@ -7,9 +7,9 @@ export {}
 
 declare module 'vue' {
   export interface GlobalComponents {
+    CoffeeListItem: typeof import('./src/components/coffee-list-item.vue')['default']
     NutButton: typeof import('@nutui/nutui-taro')['Button']
     NutCol: typeof import('@nutui/nutui-taro')['Col']
-    NutLayout: typeof import('@nutui/nutui-taro')['Layout']
     NutRow: typeof import('@nutui/nutui-taro')['Row']
     NutSpace: typeof import('@nutui/nutui-taro')['Space']
   }
