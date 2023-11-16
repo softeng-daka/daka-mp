@@ -11,6 +11,7 @@ declare module 'vue' {
     NutButton: typeof import('@nutui/nutui-taro')['Button']
     NutCol: typeof import('@nutui/nutui-taro')['Col']
     NutRow: typeof import('@nutui/nutui-taro')['Row']
+    NutSearchbar: typeof import('@nutui/nutui-taro')['Searchbar']
     NutSpace: typeof import('@nutui/nutui-taro')['Space']
   }
 }

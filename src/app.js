@@ -1,5 +1,7 @@
 import { createApp } from 'vue'
 import './app.css'
+import './common.css'
+import './assets/font/iconfont.css'
 
 const App = createApp({
   onShow (options) {},
