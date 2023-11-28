@@ -1,7 +1,8 @@
 export default defineAppConfig({
   pages: [
     'pages/index/index',
-    'pages/search/index'
+    'pages/search/index',
+    'pages/user/index'
   ],
   window: {
     backgroundTextStyle: 'light',
@@ -25,6 +26,11 @@ export default defineAppConfig({
         pagePath: 'pages/search/index',
         iconPath: './dummy-icon/search.png',
         text: '搜索'
+      },
+      {
+        pagePath: 'pages/user/index',
+        iconPath: './dummy-icon/user.png',
+        text: '用户'
       }
     ],
   },
