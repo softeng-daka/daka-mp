@@ -32,6 +32,11 @@ const list = [
         text: '搜索'
     },
     {
+        pagePath: '/pages/favorite/index',
+        iconPath: './dummy-icon/heart.png',
+        text: '收藏'
+      },
+    {
         pagePath: '/pages/user/index',
         iconPath: './dummy-icon/user.png',
         text: '用户'

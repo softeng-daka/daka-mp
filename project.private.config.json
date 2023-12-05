@@ -8,8 +8,8 @@
     "miniprogram": {
       "list": [
         {
-          "name": "搜索页",
-          "pathName": "pages/search/search",
+          "name": "登录页",
+          "pathName": "pages/login/index",
           "query": "",
           "launchMode": "default",
           "scene": null
