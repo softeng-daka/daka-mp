@@ -18,5 +18,6 @@ declare module 'vue' {
     NutSpace: typeof import('@nutui/nutui-taro')['Space']
     NutTabPane: typeof import('@nutui/nutui-taro')['TabPane']
     NutTabs: typeof import('@nutui/nutui-taro')['Tabs']
+    ShopListItem: typeof import('./src/components/shop-list-item.vue')['default']
   }
 }
