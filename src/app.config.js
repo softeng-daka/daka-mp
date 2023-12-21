@@ -4,7 +4,10 @@ export default defineAppConfig({
     'pages/search/index',
     'pages/user/index',
     'pages/login/index',
-    'pages/favorite/index'
+    'pages/favorite/index',
+    'pages/shop/index',
+    'pages/coffeinfo/index'
+
   ],
   window: {
     backgroundTextStyle: 'light',
