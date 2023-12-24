@@ -5,7 +5,7 @@
             <nut-space direction="vertical" :gutter="1" justify="center" fill>
                 <text>名称：{{ props.name }}</text>
                 <text>品牌：{{ props.brand }}</text>
-                <text>月销量：{{ props.sellCount }}+</text>
+                <text>月销量：{{ props.sellCount }}</text>
             </nut-space>
         </nut-space>
     </view>

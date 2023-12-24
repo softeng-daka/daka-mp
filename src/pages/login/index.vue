@@ -1,7 +1,7 @@
 <template>
     <view class="page-common login-container">
-        <input class="login-field" type="number" placeholder="请输入手机号码" />
-        <input class="login-field" type="number" placeholder="请输入验证码" />
+        <input class="login-field" type="number" placeholder="用户名" />
+        <input class="login-field" type="number" placeholder="密码" />
         <button class="login-btn">登录</button>
         <text class="register-link">新用户注册&nbsp;></text>
     </view>

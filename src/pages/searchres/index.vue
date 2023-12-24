@@ -1,4 +1,3 @@
-
 <template>
     <view class="page-common">
         <nut-space direction="vertical" :gutter="10" fill>
@@ -10,10 +9,10 @@
                 </view>
                 <nut-space direction="vertical" :gutter="20">
                     <view class="bkg-hot-shop">
-                        <text class="home-card-text">热销商品</text>
+                        <text class="home-card-text">最热门店</text>
                     </view>
-                    <view class="bkg-monthy-top" @click="goToEpage">
-                        <text class="home-card-text">经济单品</text>
+                    <view class="bkg-monthy-top">
+                        <text class="home-card-text">月销TOP榜</text>
                     </view>
                 </nut-space>
             </nut-space>
@@ -21,38 +20,26 @@
                 <nut-col class="home-title">Find your flavor</nut-col>
                 <nut-button type="default" @click="homePage">更换推荐</nut-button>
             </nut-row>
-            
-            <nut-space direction="vertical" :gutter="10" >
-                <coffee-list-item v-for="item in randomItems" :key="item.id"
-                    :coffee-img="item.image"
-                    :name="item.title"
-                    brand="星巴克"
-                    :sell-count="item.sold"
-                    @click="goToProduct(item.id)"
-                ></coffee-list-item>
-              
+            <nut-space direction="vertical" :gutter="10">
+                <ul>
+                    <li v-for="item in randomItems" :key="item.id">{{ item.title }}</li>
+                </ul>
             </nut-space>
         </nut-space>
     </view>
 </template>
 
-
 <script>
-import { ref } from 'vue';
+import { ref } from 'vue'
+import Taro from '@tarojs/taro'
+import '../../images/home/coffee1.png'
+import '../../images/home/coffee2.png'
+import coffeeListItem from '../../components/coffee-list-item.vue'
 import { db, _ } from '../dbtest/db.js';
-import Taro from '@tarojs/taro';
-
 
 export default {
   setup() {
     const randomItems = ref([]);
-
-    function goToProduct(productId) {
-  Taro.navigateTo({ url: '/pages/coffeinfo/index?id=' + productId });
-}
-    function goToEpage() {
-  Taro.navigateTo({ url: '/pages/Epage/index'});
-}
 
     function homePage() {
       db.collection('goods')
@@ -61,22 +48,17 @@ export default {
           let shuffled = res.data.sort(() => 0.5 - Math.random());
           let randomItemsData = shuffled.slice(0, 2);
           randomItems.value = randomItemsData;
-          console.log(randomItemsData);
-          console.log(randomItems);
         });
     }
 
     return {
       randomItems,
-      homePage,
-      goToProduct ,
-      goToEpage
+      homePage
     };
   }
 };
+
 </script>
-
-
 
 <style>
 .home-title {

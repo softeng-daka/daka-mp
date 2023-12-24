@@ -1,56 +1,26 @@
 <template>
   <view class="back">
-  <view class="coffee-pic">
-  </view> 
-  <div class="lo"><text class="title"></text>
-
-        
-  </div>
-
-  <div class="rounded-rectangle">  
-    <p >商品信息</p><image class="heart" src="../../images/heart.png" /></div>
-
-    <div>  
-    <ul>  
-      <li>  
-        <div >  
-         <p class="title3"> 商品名：{{ goodsData}}</p> 
-         <p class="title3"> 折扣： 星巴克 </p> 
-         <p class="title3"> 月销量： 600+ </p> 
-         <p class="title3"> 参考价格：23¥ </p> 
-        </div>  
-      </li>  
-    </ul>  
-  </div>
-
-  <div class="rounded-rectangle">  
-    <p >评论回复</p></div>
-
-  <div class="rounded-rectangle2">  
-    <commentListItem
-                    coffee-img="../../images/avatar1.png"
-                    pname="尼古拉斯·英俊"
-                    commenttext="这个咖啡确实挺不错的"
-                ></commentListItem>
-    <commentListItem
-                    coffee-img="../../images/avatar2.png"
-                    pname="黑"
-                    commenttext="既实惠还管饱"
-                ></commentListItem>
-    <commentListItem
-                    coffee-img="../../images/avatar2.png"
-                    pname="阿萨德"
-                    commenttext="好爱啊好喝啊"
-                ></commentListItem>
-
-    </div>  
+    <div class="rounded-rectangle">  
+    <p >经济单品</p></div>
+    <nut-space direction="vertical" :gutter="10" >
+                <coffee-list-item v-for="item in randomItems" :key="item.id"
+                    :coffee-img="item.image"
+                    :name="item.title"
+                    brand="星巴克"
+                    :sell-count="item.sold"
+                    @click="goToProduct(item.id)"
+                ></coffee-list-item>
+              
+            </nut-space>
 </view>
-</template>
 
+</template>
 <script>
 import { ref, onMounted } from 'vue';
 import { db, _ } from '../dbtest/db.js';
 import Taro from '@tarojs/taro';
+
+
 
 export default {
   setup() {
@@ -70,6 +40,8 @@ export default {
           .get()
           .then((res) => {
            
+            
+            console.log(typeof res.data)
             a=res.data;
             console.log(a);
             console.log(res.data);

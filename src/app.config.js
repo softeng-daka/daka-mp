@@ -6,7 +6,11 @@ export default defineAppConfig({
     'pages/login/index',
     'pages/favorite/index',
     'pages/shop/index',
-    'pages/coffeinfo/index'
+    'pages/coffeinfo/index',
+    'pages/dbtest/dbtest',
+    'pages/Epage/index'
+
+
 
   ],
   window: {
