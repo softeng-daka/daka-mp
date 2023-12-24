@@ -14,10 +14,10 @@
     <ul>  
       <li>  
         <div >  
-         <p class="title3"> 商品名：{{ goodsData}}</p> 
-         <p class="title3"> 折扣： 星巴克 </p> 
-         <p class="title3"> 月销量： 600+ </p> 
-         <p class="title3"> 参考价格：23¥ </p> 
+         <p class="title3"> 商品名：{{ goodsTitle }}</p> 
+         <p class="title3"> 折扣： {{ goodsDiscount }} </p> 
+         <p class="title3"> 月销量： {{ goodsSold }}+ </p> 
+         <p class="title3"> 参考价格：{{ goodsMarketPrice }}¥ </p> 
         </div>  
       </li>  
     </ul>  
@@ -54,8 +54,11 @@ import Taro from '@tarojs/taro';
 
 export default {
   setup() {
-    const goodsData = ref({});
-      var a;
+    const goodsTitle = ref('')
+    const goodsDiscount = ref(0)
+    const goodsSold = ref(0)
+    const goodsMarketPrice = ref(0)
+
     onMounted(() => {
       const params = Taro.getCurrentInstance().router?.params;
       if (params && params.id) {
@@ -69,13 +72,10 @@ export default {
           })
           .get()
           .then((res) => {
-           
-            a=res.data;
-            console.log(a);
-            console.log(res.data);
-            console.log(productId);
-            console.log(goodsData);
-            console.log(goodsData.value);
+            goodsTitle.value = res.data[0].title
+            goodsDiscount.value = res.data[0].discount
+            goodsSold.value = res.data[0].sold
+            goodsMarketPrice.value = res.data[0].marketPrice
           })
           .catch((err) => {
             console.error('Failed to fetch goods:', err);
@@ -84,11 +84,10 @@ export default {
     });
 
     return {
-
-      goodsData,
-      a,
-      
-    
+      goodsTitle,
+      goodsDiscount,
+      goodsSold,
+      goodsMarketPrice
     };
   },
 };

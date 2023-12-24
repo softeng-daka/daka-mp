@@ -3,6 +3,7 @@ import { createPinia } from 'pinia'
 import './app.css'
 import './common.css'
 import './assets/font/iconfont.css'
+import './pages/dbTest/db'
 
 const pinia = createPinia()
 
