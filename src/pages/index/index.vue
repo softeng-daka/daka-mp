@@ -37,43 +37,36 @@
 </template>
 
 
-<script>
+<script setup>
 import { ref } from 'vue';
 import { db, _ } from '../dbtest/db.js';
-import Taro from '@tarojs/taro';
+import Taro, { useLoad } from '@tarojs/taro';
 
+const randomItems = ref([]);
 
-export default {
-  setup() {
-    const randomItems = ref([]);
-
-    function goToProduct(productId) {
-  Taro.navigateTo({ url: '/pages/coffeinfo/index?id=' + productId });
+const homePage = () => {
+    db.collection('goods')
+    .get()
+    .then(res => {
+        let shuffled = res.data.sort(() => 0.5 - Math.random());
+        let randomItemsData = shuffled.slice(0, 2);
+        randomItems.value = randomItemsData;
+        console.log(randomItemsData);
+        console.log(randomItems);
+    });
 }
-    function goToEpage() {
-  Taro.navigateTo({ url: '/pages/Epage/index'});
+
+const goToProduct = productId => {
+    Taro.navigateTo({ url: '/pages/coffeinfo/index?id=' + productId });
 }
 
-    function homePage() {
-      db.collection('goods')
-        .get()
-        .then(res => {
-          let shuffled = res.data.sort(() => 0.5 - Math.random());
-          let randomItemsData = shuffled.slice(0, 2);
-          randomItems.value = randomItemsData;
-          console.log(randomItemsData);
-          console.log(randomItems);
-        });
-    }
+const goToEpage = () => {
+    Taro.navigateTo({ url: '/pages/Epage/index'});
+}
 
-    return {
-      randomItems,
-      homePage,
-      goToProduct ,
-      goToEpage
-    };
-  }
-};
+useLoad(async () => {
+    homePage();
+})
 </script>
 
 
