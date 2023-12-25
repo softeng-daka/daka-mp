@@ -2,7 +2,7 @@
 <template>
    <view class="back">
    <div class="rounded-rectangle">  
-    <p >经济单品</p></div></view>
+    <p >热门商品</p></div></view>
   
 <view class="page-common">
     <nut-space direction="vertical" :gutter="10" >
@@ -23,19 +23,15 @@ import { ref } from 'vue';
 import { db, _ } from '../dbtest/db.js';
 import Taro, { useLoad } from '@tarojs/taro';
 
-const randomItems = ref([]);
 const cofitems=ref([]);
 
-const getItemsWithPriceUnder20=()=> {
-  db.collection('goods')
-    .where({
-      price: db.command.lt(20) // Use the less than (lt) query operation
-    })
+const soldTop=()=> {
+    db.collection('goods')
+    .orderBy('mark', 'desc') 
     .get()
     .then(res => {
       console.log(res.data);
       cofitems.value=res.data;
-      console.log(cofitems);
     });
   }
 
@@ -44,7 +40,7 @@ const getItemsWithPriceUnder20=()=> {
 }
 
 useLoad(async () => {
-    getItemsWithPriceUnder20();
+    soldTop();
 })
 </script>
 

@@ -9,8 +9,8 @@
                     <text class="home-card-text">最新单品</text>
                 </view>
                 <nut-space direction="vertical" :gutter="20">
-                    <view class="bkg-hot-shop">
-                        <text class="home-card-text">热销商品</text>
+                    <view class="bkg-hot-shop" @click="goToHpage">
+                        <text class="home-card-text" >热销商品</text>
                     </view>
                     <view class="bkg-monthy-top" @click="goToEpage">
                         <text class="home-card-text">经济单品</text>
@@ -26,7 +26,7 @@
                 <coffee-list-item v-for="item in randomItems" :key="item.id"
                     :coffee-img="item.image"
                     :name="item.title"
-                    brand="星巴克"
+                    :price="item.price"
                     :sell-count="item.sold"
                     @click="goToProduct(item.id)"
                 ></coffee-list-item>
@@ -62,6 +62,9 @@ const goToProduct = productId => {
 
 const goToEpage = () => {
     Taro.navigateTo({ url: '/pages/Epage/index'});
+}
+const goToHpage = () => {
+    Taro.navigateTo({ url: '/pages/Hpage/index'});
 }
 
 useLoad(async () => {

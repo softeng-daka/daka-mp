@@ -3,7 +3,8 @@ export default {
   pages: [
     'pages/index/index', // 首页
     'pages/coffeinfo/index',
-    'pages/Epage/index', // 商品详情页
+    'pages/Epage/index', 
+    'pages/Hpage/index',
     // 其他页面路径
   ],
   usingComponents: {}

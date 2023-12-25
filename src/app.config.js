@@ -8,7 +8,11 @@ export default defineAppConfig({
     'pages/shop/index',
     'pages/coffeinfo/index',
     'pages/dbtest/dbtest',
-    'pages/Epage/index'
+    'pages/Epage/index',
+    'pages/Hpage/index',
+    'pages/searchres/index'
+
+
 
 
 

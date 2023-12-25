@@ -1,7 +1,7 @@
 <template>
   <view class="back">
-  <view class="coffee-pic">
-  </view> 
+  <image class="coffee-pic"  :src="goodspic"/>
+  
   <div class="lo"><text class="title"></text>
 
         
@@ -16,7 +16,7 @@
         <div >  
          <p class="title3"> 商品名：{{ goodsTitle }}</p> 
          <p class="title3"> 折扣： {{ goodsDiscount }} </p> 
-         <p class="title3"> 月销量： {{ goodsSold }}+ </p> 
+         <p class="title3"> 月销量： {{ goodsSold }} </p> 
          <p class="title3"> 参考价格：{{ goodsMarketPrice }}¥ </p> 
         </div>  
       </li>  
@@ -58,12 +58,14 @@ export default {
     const goodsDiscount = ref(0)
     const goodsSold = ref(0)
     const goodsMarketPrice = ref(0)
+    const goodspic=ref("")
 
     onMounted(() => {
       const params = Taro.getCurrentInstance().router?.params;
       if (params && params.id) {
      
         const productId = parseInt(params.id);
+        console.log(params.id);
         console.log(productId);
 
         db.collection('goods')
@@ -72,10 +74,13 @@ export default {
           })
           .get()
           .then((res) => {
+            console.log(res.data )
             goodsTitle.value = res.data[0].title
             goodsDiscount.value = res.data[0].discount
             goodsSold.value = res.data[0].sold
             goodsMarketPrice.value = res.data[0].marketPrice
+            goodspic.value=res.data[0].image
+            console.log(res.data[0].image)
           })
           .catch((err) => {
             console.error('Failed to fetch goods:', err);
@@ -87,7 +92,8 @@ export default {
       goodsTitle,
       goodsDiscount,
       goodsSold,
-      goodsMarketPrice
+      goodsMarketPrice,
+      goodspic
     };
   },
 };
@@ -161,9 +167,6 @@ export default {
 }
 
 .coffee-pic {
-  background-image: url('../../images/cof.png');
-  background-repeat: no-repeat;
-  background-size:100% 450px;
   width: 100%;
   height: 450px;
 }

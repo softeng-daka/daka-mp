@@ -4,7 +4,7 @@
             <image class="list-item-coffee-img" :src="props.coffeeImg" />
             <nut-space direction="vertical" :gutter="1" justify="center" fill>
                 <text>名称：{{ props.name }}</text>
-                <text>品牌：{{ props.brand }}</text>
+                <text>价格：{{ props.price }}¥</text>
                 <text>月销量：{{ props.sellCount }}</text>
             </nut-space>
         </nut-space>
@@ -22,7 +22,7 @@ const props = defineProps({
         type: String,
         required: true
     },
-    brand: {
+    price: {
         type: String,
         required: true
     },
