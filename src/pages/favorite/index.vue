@@ -2,55 +2,83 @@
     <view class="page-common favorite-page">
         <nut-tabs background="#F7EEE9" v-model="tabValue">
             <nut-tab-pane class="favorite-tab-pane" title="商品" pane-key="0">
-                <nut-space direction="vertical" :gutter="10">
-                    <coffee-list-item
-                        coffee-img="../../images/home/coffee1.png"
-                        name="龙眼米酿风味慕斯浓缩"
-                        brand="星巴克"
-                        :sell-count="1000"
-                    ></coffee-list-item>
-                    <coffee-list-item
-                        coffee-img="../../images/home/coffee2.png"
-                        name="海盐焦糖慕斯浓缩"
-                        brand="星巴克"
-                        :sell-count="500"
-                    ></coffee-list-item>
+
+                <nut-space direction="vertical" :gutter="10" >
+                <coffee-list-item v-for="item in cofitems" :key="item.id"
+                    :coffee-img="item.image"
+                    :name="item.title"
+                    :price="item.price"
+                    :sell-count="item.sold"
+                    @click="goToProduct(item.id)"
+                ></coffee-list-item>
+                   
                 </nut-space>
-            </nut-tab-pane>
-            <nut-tab-pane class="favorite-tab-pane" title="店铺" pane-key="1">
-                <nut-space direction="vertical" :gutter="10">
-                    <shop-list-item
-                        shop-img="../../images/home/shop1.png"
-                        name="星巴克"
-                        address="高新区科技东路12号"
-                        :sell-count="700"
-                    ></shop-list-item>
-                    <shop-list-item
-                        shop-img="../../images/home/shop2.png"
-                        name="瑞辛"
-                        address="师大学生街190号"
-                        :sell-count="400"
-                    ></shop-list-item>
-                </nut-space>
+    
             </nut-tab-pane>
         </nut-tabs>
     </view>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import Taro from '@tarojs/taro'
+
 import '../../images/home/coffee1.png'
 import '../../images/home/coffee2.png'
 import '../../images/home/shop1.png'
 import '../../images/home/shop2.png'
 import coffeeListItem from '../../components/coffee-list-item.vue'
 import shopListItem from '../../components/shop-list-item.vue'
+import { ref, onMounted } from 'vue';
+import { db, _ } from '../dbtest/db.js';
+import Taro, { useLoad } from '@tarojs/taro';
 
-const tabValue = ref('0')
+const cofitems = ref([]);
+const opid = ref('');
+const items =ref([]);
 
+const getItems = async () => {
+  try {
+    const res1 = await Taro.cloud.callFunction({
+      name: 'getOpenid'
+    });
+    const openid = res1.result._openid;
+    opid.value = openid;
+    console.log(res1.result.message);
+    console.log(openid);
+
+    const res2 = await db.collection('users')
+      .where({
+        _openid: opid.value
+      })
+      .get();
+    cofitems.value=res2.data;
+    console.log(cofitems);
+    console.log(1111);
+  } catch (err) {
+    console.error(err);
+  }
+};
+const goToProduct = productId => {
+  Taro.navigateTo({ url: '/pages/coffeinfo/index?id=' + productId });
+};
+
+const getUserInfoByOpenId = async () => {
+  try {
+    const res = await db.collection('users')
+      .where({
+        _openid: opid.value
+      })
+      .get();
+    console.log(res.data);
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+useLoad(async () => {
+  await getItems();
+  await getUserInfoByOpenId();
+});
 </script>
-
 <style>
 .favorite-tab-pane { background-color: #E8D5C8; }
 .favorite-page { padding: 0; }

@@ -1,50 +1,51 @@
 <template>
   <view class="back">
-  <image class="coffee-pic"  :src="goodspic"/>
-  
-  <div class="lo"><text class="title"></text>
+    <image class="coffee-pic" :src="goodspic" />
 
-        
-  </div>
+    <div class="lo">
+      <text class="title"></text>
+    </div>
 
-  <div class="rounded-rectangle">  
-    <p >商品信息</p><image class="heart" src="../../images/heart.png" /></div>
+    <div class="rounded-rectangle">
+      <p>商品信息</p>
+      <button @click="addFavorite">点击添加收藏</button>
+    </div>
 
-    <div>  
-    <ul>  
-      <li>  
-        <div >  
-         <p class="title3"> 商品名：{{ goodsTitle }}</p> 
-         <p class="title3"> 折扣： {{ goodsDiscount }} </p> 
-         <p class="title3"> 月销量： {{ goodsSold }} </p> 
-         <p class="title3"> 参考价格：{{ goodsMarketPrice }}¥ </p> 
-        </div>  
-      </li>  
-    </ul>  
-  </div>
+    <div>
+      <ul>
+        <li>
+          <div>
+            <p class="title3"> 商品名：{{ goodsTitle }}</p>
+            <p class="title3"> 折扣： {{ goodsDiscount }} </p>
+            <p class="title3"> 月销量： {{ goodsSold }} </p>
+            <p class="title3"> 参考价格：{{ goodsMarketPrice }}¥ </p>
+          </div>
+        </li>
+      </ul>
+    </div>
 
-  <div class="rounded-rectangle">  
-    <p >评论回复</p></div>
+    <div class="rounded-rectangle">
+      <p>评论回复</p>
+    </div>
 
-  <div class="rounded-rectangle2">  
-    <commentListItem
-                    coffee-img="../../images/avatar1.png"
-                    pname="尼古拉斯·英俊"
-                    commenttext="这个咖啡确实挺不错的"
-                ></commentListItem>
-    <commentListItem
-                    coffee-img="../../images/avatar2.png"
-                    pname="黑"
-                    commenttext="既实惠还管饱"
-                ></commentListItem>
-    <commentListItem
-                    coffee-img="../../images/avatar2.png"
-                    pname="阿萨德"
-                    commenttext="好爱啊好喝啊"
-                ></commentListItem>
-
-    </div>  
-</view>
+    <div class="rounded-rectangle2">
+      <commentListItem
+        coffee-img="../../images/avatar1.png"
+        pname="尼古拉斯·英俊"
+        commenttext="这个咖啡确实挺不错的"
+      ></commentListItem>
+      <commentListItem
+        coffee-img="../../images/avatar2.png"
+        pname="黑"
+        commenttext="既实惠还管饱"
+      ></commentListItem>
+      <commentListItem
+        coffee-img="../../images/avatar2.png"
+        pname="阿萨德"
+        commenttext="好爱啊好喝啊"
+      ></commentListItem>
+    </div>
+  </view>
 </template>
 
 <script>
@@ -54,38 +55,87 @@ import Taro from '@tarojs/taro';
 
 export default {
   setup() {
-    const goodsTitle = ref('')
-    const goodsDiscount = ref(0)
-    const goodsSold = ref(0)
-    const goodsMarketPrice = ref(0)
-    const goodspic=ref("")
+    const goodsTitle = ref('');
+    const goodsDiscount = ref(0);
+    const goodsSold = ref(0);
+    const goodsMarketPrice = ref(0);
+    const goodspic = ref('');
+    const opid=ref('');
+    const gid=ref(0);
+
+    const addFavorite = () => {
+      const users = db.collection('users');
+      console.log('图片被点击了');
+      const gidx=gid.value;
+      const opidx=opid.value;
+        console.log(gidx);
+        console.log(opidx);
+    // 首先检查用户的 like 数组中是否已经包含该商品 id
+    users.where({
+      _openid: opidx,
+      like: _.in([gidx])
+    }).get().then(res => {
+      if (res.data.length > 0) {
+        // 用户的 like 数组中已包含该商品 id
+        console.log('该商品已在喜爱列表中');
+        return false;
+      } else {
+        // 用户的 like 数组中不包含该商品 id，将其添加到数组中
+        console.log(gidx);
+        console.log(opidx);
+        users.where({
+          _openid: opidx
+        })
+        .update({
+          data: {
+            like: _.push(gidx)
+          }
+        }).then(updateRes => {
+          console.log('商品已添加到喜爱列表');
+        }).catch(updateErr => {
+          console.error(updateErr);
+        });
+      }
+    }).catch(err => {
+      console.error(err);
+    });
+    };
 
     onMounted(() => {
       const params = Taro.getCurrentInstance().router?.params;
       if (params && params.id) {
-     
         const productId = parseInt(params.id);
-        console.log(params.id);
         console.log(productId);
-
+        gid.value=productId;
+        console.log(gid);
         db.collection('goods')
           .where({
             id: productId,
           })
           .get()
           .then((res) => {
-            console.log(res.data )
-            goodsTitle.value = res.data[0].title
-            goodsDiscount.value = res.data[0].discount
-            goodsSold.value = res.data[0].sold
-            goodsMarketPrice.value = res.data[0].marketPrice
-            goodspic.value=res.data[0].image
-            console.log(res.data[0].image)
+            goodsTitle.value = res.data[0].title;
+            goodsDiscount.value = res.data[0].discount;
+            goodsSold.value = res.data[0].sold;
+            goodsMarketPrice.value = res.data[0].marketPrice;
+            goodspic.value = res.data[0].image;
           })
           .catch((err) => {
             console.error('Failed to fetch goods:', err);
           });
       }
+
+      Taro.cloud.callFunction({
+      name: 'getOpenid'
+    }).then(res => {
+      const openid = res.result._openid;
+      opid.value = openid; // 将获取到的 _openid 赋值给 this._openid
+      console.log(res.result.message); // 显示 "用户已存在" 或 "新用户已添加"
+      console.log(openid); // 显示用户的 openid
+    }).catch(err => {
+      console.error(err);
+    });
+
     });
 
     return {
@@ -93,12 +143,14 @@ export default {
       goodsDiscount,
       goodsSold,
       goodsMarketPrice,
-      goodspic
+      goodspic,
+      opid,
+      addFavorite,
+      gid,
     };
   },
 };
 </script>
-
 <style>
 .title{
   font-size:   60px;

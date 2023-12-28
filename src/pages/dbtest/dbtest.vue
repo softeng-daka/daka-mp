@@ -118,11 +118,15 @@ export default {
     const users = db.collection('users');
     const _openid = this._openid;
     const goodid = this.goodid;
+    console.log(_openid);
+    console.log(goodid);
+
 
     // 首先检查用户的 like 数组中是否已经包含该商品 id
     users.where({
       _openid: _openid,
       like: _.in([goodid])
+  
     }).get().then(res => {
       if (res.data.length > 0) {
         // 用户的 like 数组中已包含该商品 id
