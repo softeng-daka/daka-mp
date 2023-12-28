@@ -4,7 +4,7 @@
             <nut-tab-pane class="favorite-tab-pane" title="商品" pane-key="0">
 
                 <nut-space direction="vertical" :gutter="10" >
-                <coffee-list-item v-for="item in cofitems" :key="item.id"
+                <coffee-list-item v-for="item in items" :key="item.id"
                     :coffee-img="item.image"
                     :name="item.title"
                     :price="item.price"
@@ -36,6 +36,7 @@ const opid = ref('');
 const items =ref([]);
 
 const getItems = async () => {
+  items.value = []
   try {
     const res1 = await Taro.cloud.callFunction({
       name: 'getOpenid'
@@ -50,11 +51,14 @@ const getItems = async () => {
         _openid: opid.value
       })
       .get();
-    cofitems.value=res2.data;
-   console.log(cofitems.like);
-    console.log(items);
-    console.log(cofitems);
-    console.log(1111);
+    const like = res2.data[0].like;
+    for (let i = 0; i < like.length; i++) {
+      const it = await db.collection('goods')
+        .where({
+          id: like[i]
+        }).get()
+      items.value.push(it.data[0])
+    }
   } catch (err) {
     console.error(err);
   }
