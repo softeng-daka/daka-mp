@@ -51,6 +51,8 @@ const getItems = async () => {
       })
       .get();
     cofitems.value=res2.data;
+   console.log(cofitems.like);
+    console.log(items);
     console.log(cofitems);
     console.log(1111);
   } catch (err) {

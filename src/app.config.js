@@ -10,7 +10,8 @@ export default defineAppConfig({
     'pages/dbtest/dbtest',
     'pages/Epage/index',
     'pages/Hpage/index',
-    'pages/searchres/index'
+    'pages/searchres/index',
+    'pages/Ppage/index'
 
 
 

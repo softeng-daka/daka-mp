@@ -5,8 +5,8 @@
             <text class="home-title">Hi，Bahamaha（用户名）</text>
             <text class="home-subtitle">想品茗一杯咖啡吗?</text>
             <nut-space :gutter="20" fill>
-                <view class="bkg-newest">
-                    <text class="home-card-text">最新单品</text>
+                <view class="bkg-newest" @click="gotoPpage">
+                    <text class="home-card-text" >高端商品</text>
                 </view>
                 <nut-space direction="vertical" :gutter="20">
                     <view class="bkg-hot-shop" @click="goToHpage">
@@ -54,6 +54,9 @@ const homePage = () => {
         console.log(randomItemsData);
         console.log(randomItems);
     });
+}
+const gotoPpage=()=>{
+    Taro.navigateTo({ url: '/pages/Ppage/index'});
 }
 
 const goToProduct = productId => {
