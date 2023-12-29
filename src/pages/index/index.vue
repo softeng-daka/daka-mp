@@ -2,7 +2,7 @@
 <template>
     <view class="page-common">
         <nut-space direction="vertical" :gutter="10" fill>
-            <text class="home-title">Hi，Bahamaha（用户名）</text>
+            <text class="home-title">Hi，Bahamaha</text>
             <text class="home-subtitle">想品茗一杯咖啡吗?</text>
             <nut-space :gutter="20" fill>
                 <view class="bkg-newest" @click="gotoPpage">

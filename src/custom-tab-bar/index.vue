@@ -1,10 +1,10 @@
 <template>
-    <cover-view class="tab-bar">
-      <cover-view class="tab-bar-border"></cover-view>
-        <cover-view v-for="(item, index) in list" :key="index" class="tab-bar-item" @tap="switchTab(index, item.pagePath)">
+    <view class="tab-bar">
+      <view class="tab-bar-border"></view>
+        <view v-for="(item, index) in list" :key="index" class="tab-bar-item" @tap="switchTab(index, item.pagePath)">
           <icon-font :style="{ color: selected === index ? selectedColor : color }" size="35" font-class-name="iconfont" class-prefix="icon" :name="item.iconPath.substring(13)" />
-        </cover-view>
-    </cover-view>
+        </view>
+    </view>
 </template>
 
 <script setup>
@@ -85,7 +85,7 @@ function switchTab(index, url) {
     height: 54px;
 }
 
-.tab-bar-item cover-view {
+.tab-bar-item view {
     font-size: 20px;
 }
 
