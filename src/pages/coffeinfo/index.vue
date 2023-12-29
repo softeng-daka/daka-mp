@@ -8,8 +8,8 @@
 
     <div class="rounded-rectangle">
       <p>商品信息</p>
-      <button v-if="!isFavorite"  @click="addFavorite">添加收藏</button>
-  <button v-if="isFavorite"  @click="removeFavorite">取消收藏</button>
+      <button v-if="!isFavorite && queryFavoriteComplete"  @click="addFavorite">添加收藏</button>
+      <button v-if="isFavorite && queryFavoriteComplete"  @click="removeFavorite">取消收藏</button>
     </div>
 
     <div>
@@ -70,7 +70,8 @@ export default {
     const gid=ref(0);
     const comments=ref([])
     const inputComment = ref('')
-    const isFavorite = ref('');
+    const queryFavoriteComplete = ref(false)
+    const isFavorite = ref(false);
 
     const sendComment = async () => {
       if (inputComment.value == '') return
@@ -232,39 +233,40 @@ export default {
       }
 
       Taro.cloud.callFunction({
-  name: 'getOpenid'
-}).then(res => {
-  const openid = res.result._openid;
-  opid.value = openid; // 将获取到的 _openid 赋值给 this._openid
-  console.log(res.result.message); // 显示 "用户已存在" 或 "新用户已添加"
-  console.log(openid); // 显示用户的 openid
+        name: 'getOpenid'
+      }).then(res => {
+        const openid = res.result._openid;
+        opid.value = openid; // 将获取到的 _openid 赋值给 this._openid
+        console.log(res.result.message); // 显示 "用户已存在" 或 "新用户已添加"
+        console.log(openid); // 显示用户的 openid
 
-  // 在获取到 openid 后执行后续的操作
-  const users = db.collection('users');
-  console.log('99999');
-  const gidx = gid.value;
-  const opidx = opid.value;
-  console.log(gidx);
-  console.log(opidx);
+        // 在获取到 openid 后执行后续的操作
+        const users = db.collection('users');
+        console.log('99999');
+        const gidx = gid.value;
+        const opidx = opid.value;
+        console.log(gidx);
+        console.log(opidx);
 
-  users.where({
-    _openid: opidx,
-    like: _.in([gidx])
-  }).get().then(res => {
-    if (res.data.length > 0) {
-      // 用户的 like 数组中已包含该商品 id
-      isFavorite.value = true;
-      console.log('该商品已在喜爱列表中');
-    } else {
-      console.log(111);
-    }
-  }).catch(err => {
-    console.error(err);
-  });
+        users.where({
+          _openid: opidx,
+          like: _.in([gidx])
+        }).get().then(res => {
+          queryFavoriteComplete.value = true
+          if (res.data.length > 0) {
+            // 用户的 like 数组中已包含该商品 id
+            isFavorite.value = true;
+            console.log('该商品已在喜爱列表中');
+          } else {
+            console.log(111);
+          }
+        }).catch(err => {
+          console.error(err);
+        });
 
-}).catch(err => {
-  console.error(err);
-});
+      }).catch(err => {
+        console.error(err);
+      });
 
     });
 
@@ -282,6 +284,7 @@ export default {
       gid,
       comments,
       removeFavorite,
+      queryFavoriteComplete,
       isFavorite,
     };
   },
