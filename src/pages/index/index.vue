@@ -2,7 +2,7 @@
 <template>
     <view class="page-common">
         <nut-space direction="vertical" :gutter="10" fill>
-            <text class="home-title">Hi，Bahamaha</text>
+            <text class="home-title">Hi，{{ namex }}</text>
             <text class="home-subtitle">想品茗一杯咖啡吗?</text>
             <nut-space :gutter="20" fill>
                 <view class="bkg-newest" @click="gotoPpage">
@@ -43,6 +43,8 @@ import { db, _ } from '../dbtest/db.js';
 import Taro, { useLoad } from '@tarojs/taro';
 
 const randomItems = ref([]);
+const opid=ref('');
+const namex=ref('');
 
 const homePage = () => {
     db.collection('goods')
@@ -55,6 +57,32 @@ const homePage = () => {
         console.log(randomItems);
     });
 }
+const setname = () => {
+  Taro.cloud.callFunction({
+    name: 'getOpenid'
+  }).then(res => {
+    const openid = res.result._openid;
+    opid.value = openid; // 将获取到的 _openid 赋值给 opid.value
+    console.log(res.result.message); // 显示 "用户已存在" 或 "新用户已添加"
+    console.log(openid); // 显示用户的 openid
+
+    db.collection('users')
+      .where({
+        _openid: openid
+      })
+      .get()
+      .then(res => {
+        console.log(res.data);
+        namex.value=res.data[0].name;
+        console.log(namex);
+      })
+      .catch(err => {
+        console.error(err);
+      });
+  }).catch(err => {
+    console.error(err);
+  });
+};
 const gotoPpage=()=>{
     Taro.navigateTo({ url: '/pages/Ppage/index'});
 }
@@ -72,6 +100,7 @@ const goToHpage = () => {
 
 useLoad(async () => {
     homePage();
+    setname();
 })
 </script>
 
