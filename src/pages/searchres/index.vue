@@ -26,6 +26,8 @@ import Taro from '@tarojs/taro';
 export default {
   setup() {
     const searchitem = ref('');
+    const goToProduct = productId => {
+    Taro.navigateTo({ url: '/pages/coffeinfo/index?id=' + productId });}
  
     onMounted(() => {
       const params = Taro.getCurrentInstance().router?.params;
@@ -59,7 +61,8 @@ export default {
     });
 
     return {
-        searchitem
+        searchitem,
+        goToProduct
   
     };
   },

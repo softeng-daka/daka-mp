@@ -8,7 +8,8 @@
 
     <div class="rounded-rectangle">
       <p>商品信息</p>
-      <button class="keyi" @click="addFavorite">添加收藏</button><button class="keyi2" @click="removeFavorite">取消收藏</button>
+      <button v-if="!isFavorite"  @click="addFavorite">添加收藏</button>
+  <button v-if="isFavorite"  @click="removeFavorite">取消收藏</button>
     </div>
 
     <div>
@@ -69,6 +70,7 @@ export default {
     const gid=ref(0);
     const comments=ref([])
     const inputComment = ref('')
+    const isFavorite = ref(false);
 
     const sendComment = async () => {
       if (inputComment.value == '') return
@@ -124,6 +126,7 @@ export default {
           content: commentsList[i].content
         })
       }
+
     }
 
     const addFavorite = () => {
@@ -162,7 +165,9 @@ export default {
     }).catch(err => {
       console.error(err);
     });
+    isFavorite.value = true;
     };
+
     const removeFavorite=() =>{
     const users = db.collection('users');
     const gidx=gid.value;
@@ -198,6 +203,7 @@ export default {
     }).catch(err => {
       console.error(err);
     });
+    isFavorite.value = false;
   }
 
     onMounted(async () => {
@@ -233,6 +239,7 @@ export default {
       console.log(openid); // 显示用户的 openid
     }).catch(err => {
       console.error(err);
+      
     });
 
     });
@@ -251,6 +258,7 @@ export default {
       gid,
       comments,
       removeFavorite,
+      isFavorite,
     };
   },
 };

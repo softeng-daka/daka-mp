@@ -13,9 +13,6 @@
             <nut-form-item label="微信号" label-align="left">
                 <nut-input v-model="weixinId" class="nut-input-text" type="text" input-align="right" readonly />
             </nut-form-item>
-            <nut-form-item label="个性签名" label-align="left">
-                <nut-input v-model="bio" class="nut-input-text" type="text" input-align="right" readonly />
-            </nut-form-item>
         </nut-form>
     </view>
 </template>
