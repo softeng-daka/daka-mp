@@ -8,7 +8,7 @@
 
     <div class="rounded-rectangle">
       <p>商品信息</p>
-      <button class="keyi" @click="addFavorite">添加收藏</button><button class="keyi2" @click="removeFavorite">取消收藏</button>
+      <button @click="addFavorite">点击添加收藏</button>
     </div>
 
     <div>
@@ -30,20 +30,24 @@
 
     <div class="rounded-rectangle2">
       <commentListItem
-        coffee-img="../../images/avatar1.png"
-        pname="尼古拉斯·英俊"
-        commenttext="这个咖啡确实挺不错的"
+        v-for="c of comments"
+        :key="c.openid + Math.floor(Math.random() * 10000).toString()"
+        user-avatar="../../images/avatar1.png"
+        :pname="c.nickname"
+        :commenttext="c.content"
       ></commentListItem>
-      <commentListItem
-        coffee-img="../../images/avatar2.png"
-        pname="黑"
-        commenttext="既实惠还管饱"
-      ></commentListItem>
-      <commentListItem
-        coffee-img="../../images/avatar2.png"
-        pname="阿萨德"
-        commenttext="好爱啊好喝啊"
-      ></commentListItem>
+      <view class="comment-area">
+        <input
+          v-model.trim="inputComment"
+          class="comment-textbox"
+          type="text"
+          placeholder="发条评论呗"/>
+          <button
+            class="comment-send"
+            type="default"
+            plain="true"
+            @click="sendComment">发送</button>
+      </view>
     </div>
   </view>
 </template>
@@ -52,6 +56,7 @@
 import { ref, onMounted } from 'vue';
 import { db, _ } from '../dbtest/db.js';
 import Taro from '@tarojs/taro';
+import '../../images/avatar1.png'
 
 export default {
   setup() {
@@ -62,6 +67,64 @@ export default {
     const goodspic = ref('');
     const opid=ref('');
     const gid=ref(0);
+    const comments=ref([])
+    const inputComment = ref('')
+
+    const sendComment = async () => {
+      if (inputComment.value == '') return
+      let obj = {content: inputComment.value, openid: opid.value};
+      inputComment.value = ''
+
+      // 首先检查 comments 表中是否存在对应 goodid 的记录
+      const commentRes = await db.collection('comments').where({
+        goodid: gid.value
+      }).get()
+      if (commentRes.data.length > 0) {
+        // 如果存在，直接添加评论
+        await db.collection('comments').where({
+          goodid: gid.value
+        }).update({
+          data: {
+            comment: _.push([obj])
+          }
+        })
+        await reloadComment()
+      } else {
+        // 如果不存在，先创建记录
+        await db.collection('comments').add({
+          data: {
+            goodid: gid.value,
+            comment: [obj]
+          }
+        })
+        await reloadComment()
+      }
+    }
+
+    const reloadComment = async () => {
+      comments.value = []
+      const commentsRes = await db.collection('comments')
+        .where({
+          goodid: gid.value
+        })
+        .get()
+      if (commentsRes.data.length === 0) return
+
+      const commentsList = commentsRes.data[0].comment
+      let userRes
+      for (let i = 0; i < commentsList.length; i++) {
+        userRes = await db.collection('users')
+          .where({
+            _openid: commentsList[i].openid
+          })
+          .get()
+        comments.value.push({
+          openid: commentsList[i].openid,
+          nickname: userRes.data[0].name,
+          content: commentsList[i].content
+        })
+      }
+    }
 
     const addFavorite = () => {
       const users = db.collection('users');
@@ -101,65 +164,28 @@ export default {
     });
     };
 
-  const removeFavorite=() =>{
-    const users = db.collection('users');
-    const gidx=gid.value;
-      const opidx=opid.value;
-
-    // 首先检查用户的 like 数组中是否包含要删除的商品 id
-    users.where({
-      _openid: opidx,
-      like: _.in([gidx])
-    }).get().then(res => {
-      if (res.data.length > 0) {
-        // 用户的 like 数组中包含要删除的商品 id
-        // 在数组中找到该商品 id 并移除
-        const updatedLike = res.data[0].like.filter(id => id !== gidx);
-
-        // 更新用户的 like 数组
-        users.where({
-          _openid:opidx
-        })
-          .update({
-            data: {
-              like: updatedLike
-            }
-          }).then(updateRes => {
-          console.log('商品已从喜爱列表中移除');
-        }).catch(updateErr => {
-          console.error(updateErr);
-        });
-      } else {
-        // 用户的 like 数组中不包含要删除的商品 id
-        console.log('该商品不在喜爱列表中');
-      }
-    }).catch(err => {
-      console.error(err);
-    });
-  }
-
-    onMounted(() => {
+    onMounted(async () => {
       const params = Taro.getCurrentInstance().router?.params;
       if (params && params.id) {
         const productId = parseInt(params.id);
         console.log(productId);
         gid.value=productId;
         console.log(gid);
-        db.collection('goods')
+        const goodsRes = await db.collection('goods')
           .where({
             id: productId,
           })
           .get()
-          .then((res) => {
-            goodsTitle.value = res.data[0].title;
-            goodsDiscount.value = res.data[0].discount;
-            goodsSold.value = res.data[0].sold;
-            goodsMarketPrice.value = res.data[0].marketPrice;
-            goodspic.value = res.data[0].image;
-          })
           .catch((err) => {
             console.error('Failed to fetch goods:', err);
           });
+        goodsTitle.value = goodsRes.data[0].title;
+        goodsDiscount.value = goodsRes.data[0].discount;
+        goodsSold.value = goodsRes.data[0].sold;
+        goodsMarketPrice.value = goodsRes.data[0].marketPrice;
+        goodspic.value = goodsRes.data[0].image;
+        
+        await reloadComment()
       }
 
       Taro.cloud.callFunction({
@@ -182,21 +208,17 @@ export default {
       goodsMarketPrice,
       goodspic,
       opid,
+      inputComment,
       addFavorite,
+      sendComment,
+      reloadComment,
       gid,
-      removeFavorite,
+      comments
     };
   },
 };
 </script>
 <style>
-.keyi{
-  margin-right: 0px;
-
-}
-.keyi2{
-  margin-left:0px;
-}
 .title{
   font-size:   60px;
   color: #F0202A;
@@ -242,8 +264,9 @@ export default {
 
 .rounded-rectangle2
 {
-  width: 100%;   
-  height: 600px;  
+  width: 100%;
+  height: 600px; 
+  max-height: 600px;  
   border-radius: 40px; 
   background-color: rgb(246, 238, 233); 
    margin-bottom: 5px;
@@ -256,8 +279,33 @@ export default {
   margin-left: 150px ;
 }
 
+.comment-area {
+  display: flex;
+  margin: 5px 30px;
+  margin-top: 50px;
+}
 
+.comment-textbox {
+  flex-grow: 1;
+  border: 2px solid gray;
+  background-color: #f7e1d4;
+  border-radius: 200px;
+  font-size: 1.3em;
+  padding-left: 15px;
+  height: 60px;
+}
 
+.comment-send {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 150px;
+  height: 60px;
+  font-size: 1.2em;
+  line-height: 1.2em;
+  margin-left: 25px;
+  border: 2px solid gray;
+}
 
 .back{
   background-color: #E9D5C8;

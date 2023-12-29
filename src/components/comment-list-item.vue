@@ -1,7 +1,7 @@
 <template>
     <view class="comment-item">
         <nut-space :gutter="30" align="center" fill>
-            <image class="p-pic" :src="props.coffeeImg" alt="Circle Image"/>
+            <image class="p-pic" :src="props.userAvatar" alt="Circle Image"/>
             <nut-space direction="vertical" :gutter="1" justify="center" fill>
                 <text class="nametext">{{ props.pname }}</text>
                 <text class="maintext">{{ props.commenttext }}</text>
@@ -13,7 +13,7 @@
 <script setup>
 
 const props = defineProps({
-    coffeeImg: {
+    userAvatar: {
         type: String,
         required: true
     },
