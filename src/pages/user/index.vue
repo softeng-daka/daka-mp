@@ -2,7 +2,7 @@
     <view class="page-common">
         <nut-form >
             <nut-form-item label="头像" label-align="left" body-align="right">
-                <image class="user-avatar" src="../../images/avatar.png" />
+                <image class="user-avatar" src="../../images/avatar1.png" />
             </nut-form-item>
             <nut-form-item label="用户名" label-align="left">
                 <nut-input v-model="username" class="nut-input-text" type="text" input-align="right" readonly />
@@ -18,10 +18,7 @@
 </template>
 
 <script setup>
-import '../../images/home/coffee1.png'
-import '../../images/home/coffee2.png'
-import '../../images/home/shop1.png'
-import '../../images/home/shop2.png'
+import '../../images/avatar1.png'
 import coffeeListItem from '../../components/coffee-list-item.vue'
 import shopListItem from '../../components/shop-list-item.vue'
 import { ref, onMounted } from 'vue';
@@ -52,10 +49,6 @@ const getItems = async () => {
       })
       .get();
     cofitems.value=res2.data;
-    console.log(items);
-    console.log(cofitems[0].name);
-    console.log(cofitems.value);
-    console.log(1111);
   } catch (err) {
     console.error(err);
   }
