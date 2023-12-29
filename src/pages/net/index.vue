@@ -1,0 +1,1 @@
+<web-view src="http://10.133.55.217:10000/daka/" bindmessage="onWebViewMessage"></web-view>

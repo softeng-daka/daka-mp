@@ -70,7 +70,7 @@ export default {
     const gid=ref(0);
     const comments=ref([])
     const inputComment = ref('')
-    const isFavorite = ref(false);
+    const isFavorite = ref('');
 
     const sendComment = async () => {
       if (inputComment.value == '') return
@@ -131,11 +131,11 @@ export default {
 
     const addFavorite = () => {
       const users = db.collection('users');
-      console.log('图片被点击了');
       const gidx=gid.value;
       const opidx=opid.value;
-        console.log(gidx);
+      console.log(gidx);
         console.log(opidx);
+
     // 首先检查用户的 like 数组中是否已经包含该商品 id
     users.where({
       _openid: opidx,
@@ -143,12 +143,11 @@ export default {
     }).get().then(res => {
       if (res.data.length > 0) {
         // 用户的 like 数组中已包含该商品 id
+        isFavorite.value = true;
         console.log('该商品已在喜爱列表中');
         return false;
       } else {
         // 用户的 like 数组中不包含该商品 id，将其添加到数组中
-        console.log(gidx);
-        console.log(opidx);
         users.where({
           _openid: opidx
         })
@@ -173,6 +172,7 @@ export default {
     const gidx=gid.value;
       const opidx=opid.value;
 
+
     // 首先检查用户的 like 数组中是否包含要删除的商品 id
     users.where({
       _openid: opidx,
@@ -182,6 +182,7 @@ export default {
         // 用户的 like 数组中包含要删除的商品 id
         // 在数组中找到该商品 id 并移除
         const updatedLike = res.data[0].like.filter(id => id !== gidx);
+        isFavorite.value = false;
 
         // 更新用户的 like 数组
         users.where({
@@ -231,16 +232,39 @@ export default {
       }
 
       Taro.cloud.callFunction({
-      name: 'getOpenid'
-    }).then(res => {
-      const openid = res.result._openid;
-      opid.value = openid; // 将获取到的 _openid 赋值给 this._openid
-      console.log(res.result.message); // 显示 "用户已存在" 或 "新用户已添加"
-      console.log(openid); // 显示用户的 openid
-    }).catch(err => {
-      console.error(err);
-      
-    });
+  name: 'getOpenid'
+}).then(res => {
+  const openid = res.result._openid;
+  opid.value = openid; // 将获取到的 _openid 赋值给 this._openid
+  console.log(res.result.message); // 显示 "用户已存在" 或 "新用户已添加"
+  console.log(openid); // 显示用户的 openid
+
+  // 在获取到 openid 后执行后续的操作
+  const users = db.collection('users');
+  console.log('99999');
+  const gidx = gid.value;
+  const opidx = opid.value;
+  console.log(gidx);
+  console.log(opidx);
+
+  users.where({
+    _openid: opidx,
+    like: _.in([gidx])
+  }).get().then(res => {
+    if (res.data.length > 0) {
+      // 用户的 like 数组中已包含该商品 id
+      isFavorite.value = true;
+      console.log('该商品已在喜爱列表中');
+    } else {
+      console.log(111);
+    }
+  }).catch(err => {
+    console.error(err);
+  });
+
+}).catch(err => {
+  console.error(err);
+});
 
     });
 

@@ -11,7 +11,9 @@ export default defineAppConfig({
     'pages/Epage/index',
     'pages/Hpage/index',
     'pages/searchres/index',
-    'pages/Ppage/index'
+    'pages/Ppage/index',
+    'pages/net/index'
+
 
 
 
