@@ -27,9 +27,9 @@ import '../../images/home/shop1.png'
 import '../../images/home/shop2.png'
 import coffeeListItem from '../../components/coffee-list-item.vue'
 import shopListItem from '../../components/shop-list-item.vue'
-import { ref, onMounted } from 'vue';
+import { ref } from 'vue';
 import { db, _ } from '../dbtest/db.js';
-import Taro, { useLoad } from '@tarojs/taro';
+import Taro, { useDidShow } from '@tarojs/taro';
 
 const cofitems = ref([]);
 const opid = ref('');
@@ -80,7 +80,7 @@ const getUserInfoByOpenId = async () => {
   }
 };
 
-useLoad(async () => {
+useDidShow(async () => {
   await getItems();
   await getUserInfoByOpenId();
 });

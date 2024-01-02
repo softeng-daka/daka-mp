@@ -1,72 +1,66 @@
-
 <template>
-    <view class="back">
+  <view class="back">
     <div class="rounded-rectangle">  
-     <p >搜索结果</p></div></view>
-   
- <view class="page-common">
-     <nut-space direction="vertical" :gutter="10" >
-                 <coffee-list-item v-for="item in searchitem" :key="item.id"
-                     :coffee-img="item.image"
-                     :name="item.title"
-                     :price="item.price"
-                     :sell-count="item.sold"
-                     @click="goToProduct(item.id)"
-                 ></coffee-list-item>
-               
-             </nut-space>
- </view>
- 
- </template>
- <script >
- import { ref, onMounted } from 'vue';
+      <p>搜索结果</p>
+    </div>
+  </view>
+  
+  <view class="page-common">
+    <nut-space direction="vertical" :gutter="10" >
+      <coffee-list-item v-for="item in searchitem" :key="item.id"
+          :coffee-img="item.image"
+          :name="item.title"
+          :price="item.price"
+          :sell-count="item.sold"
+          @click="goToProduct(item.id)"
+      ></coffee-list-item> 
+    </nut-space>
+  </view>
+</template>
+
+<script setup>
+import { ref, onMounted } from 'vue';
 import { db, _ } from '../dbtest/db.js';
 import Taro from '@tarojs/taro';
 
-export default {
-  setup() {
-    const searchitem = ref('');
-    const goToProduct = productId => {
-    Taro.navigateTo({ url: '/pages/coffeinfo/index?id=' + productId });}
- 
-    onMounted(() => {
-      const params = Taro.getCurrentInstance().router?.params;
-      console.log(params);
-      if (params && params.keyword) {
-     
-        const searchkeyword = params.keyword;
-        console.log(params.keyword);
-        console.log(searchkeyword);
+const searchitem = ref('');
+const goToProduct = productId => { Taro.navigateTo({ url: '/pages/coffeinfo/index?id=' + productId }) }
 
-        db.collection('goods')
-           .where(
-      {
-        title: db.RegExp({
-          regexp: searchkeyword,
-          options: 'i', // 不区分大小写
-        })
-      }
+onMounted(async () => {
+  const params = Taro.getCurrentInstance().router?.params;
+  if (params) {
+    const res = await db.collection('goods').where(
+      _.and([
+        {
+          title: db.RegExp({
+            regexp: params.keyword,
+            options: 'i', // 不区分大小写
+          })
+        },
+        {
+          title: db.RegExp({
+            regexp: params.brand,
+            options: 'i', // 不区分大小写
+          })
+        },
+        {
+          title: db.RegExp({
+            regexp: params.type,
+            options: 'i', // 不区分大小写
+          })
+        }
+      ])
     )
     .orderBy('mark', 'desc') 
     .get()
-          .then((res) => {
-            console.log(res.data )
-            searchitem.value=res.data
-            console.log(res.data )
-          })
-          .catch((err) => {
-            console.error('Failed to fetch goods:', err);
-          });
-      }
+    .catch((err) => {
+      console.error('Failed to fetch goods:', err);
     });
+    
+    searchitem.value = res.data
+  }
+});
 
-    return {
-        searchitem,
-        goToProduct
-  
-    };
-  },
-};
 </script>
  
 

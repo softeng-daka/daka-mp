@@ -169,44 +169,42 @@ export default {
     };
 
     const removeFavorite=() =>{
-    const users = db.collection('users');
-    const gidx=gid.value;
-      const opidx=opid.value;
+      const users = db.collection('users');
+      const gidx=gid.value;
+        const opidx=opid.value;
+      // 首先检查用户的 like 数组中是否包含要删除的商品 id
+      users.where({
+        _openid: opidx,
+        like: _.in([gidx])
+      }).get().then(res => {
+        if (res.data.length > 0) {
+          // 用户的 like 数组中包含要删除的商品 id
+          // 在数组中找到该商品 id 并移除
+          const updatedLike = res.data[0].like.filter(id => id !== gidx);
+          isFavorite.value = false;
 
-
-    // 首先检查用户的 like 数组中是否包含要删除的商品 id
-    users.where({
-      _openid: opidx,
-      like: _.in([gidx])
-    }).get().then(res => {
-      if (res.data.length > 0) {
-        // 用户的 like 数组中包含要删除的商品 id
-        // 在数组中找到该商品 id 并移除
-        const updatedLike = res.data[0].like.filter(id => id !== gidx);
-        isFavorite.value = false;
-
-        // 更新用户的 like 数组
-        users.where({
-          _openid:opidx
-        })
-          .update({
-            data: {
-              like: updatedLike
-            }
-          }).then(updateRes => {
-          console.log('商品已从喜爱列表中移除');
-        }).catch(updateErr => {
-          console.error(updateErr);
-        });
-      } else {
-        // 用户的 like 数组中不包含要删除的商品 id
-        console.log('该商品不在喜爱列表中');
-      }
-    }).catch(err => {
-      console.error(err);
-    });
-    isFavorite.value = false;
-  }
+          // 更新用户的 like 数组
+          users.where({
+            _openid:opidx
+          })
+            .update({
+              data: {
+                like: updatedLike
+              }
+            }).then(updateRes => {
+            console.log('商品已从喜爱列表中移除');
+          }).catch(updateErr => {
+            console.error(updateErr);
+          });
+        } else {
+          // 用户的 like 数组中不包含要删除的商品 id
+          console.log('该商品不在喜爱列表中');
+        }
+      }).catch(err => {
+        console.error(err);
+      });
+      isFavorite.value = false;
+    }
 
     onMounted(async () => {
       const params = Taro.getCurrentInstance().router?.params;
